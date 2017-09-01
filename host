@@ -1,0 +1,2 @@
+[vccloud]
+alias ansible_ssh_host=192.168.25.36 ansible_ssh_pass=1
