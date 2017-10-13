@@ -26,7 +26,9 @@ ck=$(echo $(dirname $(readlink -f "$me"))"/task_manager.txt")
 touch $ck
 
 function add(){
-	echo "<undone>" $cm >> task_manager.txt
+	echo $cm > task_undone.temp
+	nl -s "<undone>" task_undone.temp >> task_manager.txt
+	rm -rf task_undone.temp
 	
 	#remove duplicate task
 	awk '!a[$0]++' task_manager.txt > task_manager.temp
@@ -139,19 +141,21 @@ function setlowpriority(){
 function mod(){
 	if [[ $cm ]]; then
 		#echo $cm
-		cm1=$(echo $cm | awk -F'@' '{print $1}')
+		cm1=$(echo $cm | awk -F' @ ' '{print $1}')
 		#echo $cm1
 
-		cm2=$(echo $cm | awk -F'@' '{print $2}')
+		cm2=$(echo $cm | awk -F' @ ' '{print $2}')
 		#echo $cm2
 		cat task_manager.txt | grep -iwv "$cm1" > task_manager.temp
-		cat task_manager.txt | grep -iw "$cm2" > task_mod.temp
-		sed '/"$cm1"/"$cm2"' task_mod.temp
-		cat task_mod.temp
+		
+		cat task_manager.txt | grep -iw "$cm1" > task_mod.temp
+		
+		sed -e 's/$cm1/cm2/' task_mod.temp > task_moded.temp
+		cat task_moded.temp
 
 
 		mv task_manager.temp task_manager.txt
-
+		cat task_mod.temp >> task_manager.txt
 
 
 
